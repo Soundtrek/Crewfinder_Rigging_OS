@@ -19,6 +19,7 @@ The API must support:
 - no hidden logic
 - versionable payloads
 - override actions always auditable
+- override severity must be explicit
 
 ---
 
@@ -104,14 +105,22 @@ Behaviour:
 
 Input:
 - override_reason
+- override_severity
 - unresolved_items
 - user_confirmation
+
+Allowed severity values:
+- minor
+- major
+- critical
 
 Behaviour:
 - only authorized roles may override
 - reason is mandatory
+- severity is mandatory
 - action must be logged with identity and timestamp
 - overridden signoff state must be visible in exports and job history
+- critical overrides must be visually emphasized in reports and audit views
 
 ---
 
@@ -121,13 +130,18 @@ Behaviour:
 
 ### POST /api/company/rigging/policies
 
+Company policies may later define which roles can perform which override severities.
+
 ---
 
 ## Reporting
 
 ### POST /api/rigging/jobs/[jobId]/export/pdf
 
-Exports must visibly indicate if signoff occurred through override.
+Exports must visibly indicate:
+- whether signoff occurred through override
+- override severity
+- override reason
 
 ---
 
@@ -136,6 +150,13 @@ Exports must visibly indicate if signoff occurred through override.
 ### GET /api/rigging/jobs/[jobId]/history
 
 ### GET /api/rigging/jobs/[jobId]/overrides
+
+Override audit records must include:
+- actor
+- timestamp
+- severity
+- reason
+- unresolved items snapshot
 
 ---
 
