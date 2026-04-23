@@ -9,6 +9,7 @@ The API must support:
 - verification updates
 - policy enforcement
 - reporting
+- audited override control
 
 ---
 
@@ -17,6 +18,7 @@ The API must support:
 - structured JSON responses
 - no hidden logic
 - versionable payloads
+- override actions always auditable
 
 ---
 
@@ -96,6 +98,20 @@ Output:
 Behaviour:
 - must validate workflow completeness
 - must block if requirements are not met
+- may only proceed when requirements are satisfied or an authorized override is used
+
+### POST /api/rigging/jobs/[jobId]/override-signoff
+
+Input:
+- override_reason
+- unresolved_items
+- user_confirmation
+
+Behaviour:
+- only authorized roles may override
+- reason is mandatory
+- action must be logged with identity and timestamp
+- overridden signoff state must be visible in exports and job history
 
 ---
 
@@ -111,14 +127,20 @@ Behaviour:
 
 ### POST /api/rigging/jobs/[jobId]/export/pdf
 
+Exports must visibly indicate if signoff occurred through override.
+
 ---
 
 ## Audit
 
 ### GET /api/rigging/jobs/[jobId]/history
 
+### GET /api/rigging/jobs/[jobId]/overrides
+
 ---
 
 ## API Rule
 
 The API must enforce workflow rules at signoff stage, not during calculation.
+
+Override is permitted only as a controlled, role-restricted, permanently auditable action.
